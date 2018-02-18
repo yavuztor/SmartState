@@ -21,14 +21,15 @@ namespace SmartState.UnitTests {
 
     public class SampleStateful
     {
-        private static SmartState.StateMachine<SampleStatesEnum, SampleTriggersEnum> stateMachine;
+        protected static SmartState.StateMachine<SampleStatesEnum, SampleTriggersEnum> stateMachine;
         static SampleStateful() 
         {
             stateMachine = SmartState.StateMachine<SampleStatesEnum, SampleTriggersEnum>
                 .InitialState(SampleStatesEnum.Draft).OnExit<SampleStateful>(z => z.ExitActionCalled = true)
-                    .Trigger(SampleTriggersEnum.Submit).TransitsStateTo(SampleStatesEnum.Submitted)
+                    .Trigger(SampleTriggersEnum.Submit)
+                        .When<SampleStateful>(z => z.ShouldAllowTransition)
+                        .TransitsStateTo(SampleStatesEnum.Submitted)
                     .Trigger(SampleTriggersEnum.SubmitWithComment).TransitsStateTo(SampleStatesEnum.Submitted)
-                    .Trigger(SampleTriggersEnum.Submit).TransitsStateTo(SampleStatesEnum.Submitted)
 
                 .FromState(SampleStatesEnum.Submitted).OnEntry<SampleStateful>(z => z.EntryActionCalled = true)
                     .Trigger(SampleTriggersEnum.Approve).TransitsStateTo(SampleStatesEnum.Approved)
@@ -48,8 +49,10 @@ namespace SmartState.UnitTests {
         public bool EntryActionCalled { get; set; } = false;
 
         public bool ExitActionCalled { get; set; } = false;
+
+        public bool ShouldAllowTransition { get; set; } = true;
         
-        public void Submit() {
+        public virtual void Submit() {
             stateMachine.Trigger(this, this.Status, SampleTriggersEnum.Submit, () => {
                 Console.WriteLine("Submitted");
             });
@@ -82,6 +85,20 @@ namespace SmartState.UnitTests {
         public void Approve() {
             stateMachine.Trigger(this, this.Status, SampleTriggersEnum.Approve, () => {
                 Console.WriteLine("Approved");
+            });
+        }
+    }
+
+    public class SampleChild : SampleStateful
+    {
+        public SampleChild(bool throwExceptions) : base(throwExceptions)
+        {
+        }
+
+        override public void Submit()
+        {
+            stateMachine.Trigger("", this.Status, SampleTriggersEnum.Submit, () => {
+                Console.WriteLine("Submitted");
             });
         }
     }

@@ -58,5 +58,50 @@ namespace SmartState.UnitTests.StateMachine
             Assert.True(obj.EntryActionCalled);
             Assert.True(obj.ExitActionCalled);
         }
+
+        [Fact]
+        public void NotExecuteActionIfObjectIsNotCorrectType() {
+            // Arrange
+            var obj = new SampleChild(true);
+
+            // Act
+            obj.Submit();
+
+            // Assert
+            Assert.False(obj.EntryActionCalled);
+            Assert.False(obj.ExitActionCalled);
+        }
+
+        [Fact]
+        public void NotConsiderTriggerGuardIfObjectIsNotCorrectType() 
+        {
+            // Arrange
+            var obj = new SampleChild(true);
+            obj.ShouldAllowTransition = false;
+            var expectedCount = obj.Status.TransitionHistory.Count + 1;
+
+            // Act
+            obj.Submit();
+            
+            // Assert
+            Assert.Equal(expectedCount, obj.Status.TransitionHistory.Count);
+            Assert.Equal(SampleStatesEnum.Submitted, obj.Status.CurrentState);
+        }
+
+        [Fact]
+        public void ConsiderTriggerGuardIfObjectIsCorrectType() 
+        {
+            // Arrange
+            var obj = new SampleStateful(true);
+            obj.ShouldAllowTransition = false;
+            var expectedCount = obj.Status.TransitionHistory.Count;
+
+            // Act
+            obj.Submit();
+            
+            // Assert
+            Assert.Equal(expectedCount, obj.Status.TransitionHistory.Count);
+            Assert.Equal(SampleStatesEnum.Draft, obj.Status.CurrentState);
+        }
     }
 }

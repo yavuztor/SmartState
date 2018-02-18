@@ -35,6 +35,8 @@ namespace SmartState
                 return;
             }
 
+            if (!transition.Guard(stateful)) return;
+
             action();
             
             Status.AddTransition(transition);

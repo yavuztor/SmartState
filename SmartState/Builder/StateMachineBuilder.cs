@@ -98,7 +98,8 @@ namespace SmartState.Builder
 
         public IBuildTransit<TState, TTrigger> When<T>(Func<T, bool> guard) where T : class
         {
-            this.triggerGuard = (object o) => (o is T) && guard(o as T);
+            // If transition-time object is not expected type, this guard should have no effect.
+            this.triggerGuard = (object o) => (o is T) ? guard(o as T) : true;
             return this;
         }
     }
