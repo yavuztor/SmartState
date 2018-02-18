@@ -44,5 +44,19 @@ namespace SmartState.UnitTests.StateMachine
             Assert.Equal(state, obj.Status.CurrentState);
             Assert.Equal(historyCount, obj.Status.TransitionHistory.Count);
         }
+
+        [Fact]
+        public void ExecuteOnEntryAndOnExitActions() 
+        {
+            // Arrange
+            var obj = new SampleStateful(true);
+
+            // Act
+            obj.Submit();
+
+            // Assert
+            Assert.True(obj.EntryActionCalled);
+            Assert.True(obj.ExitActionCalled);
+        }
     }
 }
