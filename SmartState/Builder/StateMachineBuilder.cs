@@ -6,10 +6,14 @@ using System.Reflection;
 
 namespace SmartState.Builder
 {
-
-    public interface IBuildTrigger<TState, TTrigger>
+    public interface IBuildTransit<TState, TTrigger>
     {
         IBuildState<TState, TTrigger> TransitsStateTo(TState newState);
+    }
+
+    public interface IBuildTrigger<TState, TTrigger>:IBuildTransit<TState, TTrigger>
+    {
+        IBuildTransit<TState, TTrigger> When<T>(Func<T, bool> guard) where T:class;
     }
     
     public interface IBuildState<TState, TTrigger> {
@@ -30,6 +34,7 @@ namespace SmartState.Builder
         private ISet<State<TState, TTrigger>> states = new HashSet<State<TState, TTrigger>>();
 
         private ISet<Transition<TState, TTrigger>> currentTransitions = new HashSet<Transition<TState, TTrigger>>();
+        private Func<object, bool> triggerGuard;
 
         public StateMachineBuilder(TState initialState) {
             this.currentState = initialState;
@@ -53,13 +58,20 @@ namespace SmartState.Builder
 
         public IBuildState<TState, TTrigger> TransitsStateTo(TState newState)
         {
-            currentTransitions.Add(new Transition<TState, TTrigger>(currentState, trigger, newState));
+            currentTransitions.Add(new Transition<TState, TTrigger>(currentState, trigger, newState, triggerGuard));
+            triggerGuard = null;
             return this;
         }
 
         public IBuildTrigger<TState, TTrigger> Trigger(TTrigger trigger)
         {
             this.trigger = trigger;
+            return this;
+        }
+
+        public IBuildTransit<TState, TTrigger> When<T>(Func<T, bool> guard) where T : class
+        {
+            this.triggerGuard = (object o) => (o is T) && guard(o as T);
             return this;
         }
     }
