@@ -35,10 +35,12 @@ namespace SmartState
                 return;
             }
 
-            if (!transition.Guard(stateful)) return;
-
+            // Action should execute even if trigger is guarded.
             action();
             
+            // No state transition if guard fails...
+            if (!transition.Guard(stateful)) return;
+
             Status.AddTransition(transition);
 
             if (!Status.CurrentState.Equals(oldState.Name)) {

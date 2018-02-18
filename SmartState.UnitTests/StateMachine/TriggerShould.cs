@@ -95,6 +95,7 @@ namespace SmartState.UnitTests.StateMachine
             var obj = new SampleStateful(true);
             obj.ShouldAllowTransition = false;
             var expectedCount = obj.Status.TransitionHistory.Count;
+            var expectedSubmitCallCount = obj.SubmitCallCount + 1;
 
             // Act
             obj.Submit();
@@ -102,6 +103,7 @@ namespace SmartState.UnitTests.StateMachine
             // Assert
             Assert.Equal(expectedCount, obj.Status.TransitionHistory.Count);
             Assert.Equal(SampleStatesEnum.Draft, obj.Status.CurrentState);
+            Assert.Equal(expectedSubmitCallCount, obj.SubmitCallCount);
         }
     }
 }

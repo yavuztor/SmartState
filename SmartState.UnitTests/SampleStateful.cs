@@ -51,10 +51,13 @@ namespace SmartState.UnitTests {
         public bool ExitActionCalled { get; set; } = false;
 
         public bool ShouldAllowTransition { get; set; } = true;
+
+        public int SubmitCallCount { get; set; } = 0;
         
         public virtual void Submit() {
             stateMachine.Trigger(this, this.Status, SampleTriggersEnum.Submit, () => {
                 Console.WriteLine("Submitted");
+                SubmitCallCount++;
             });
         }
 
@@ -99,6 +102,7 @@ namespace SmartState.UnitTests {
         {
             stateMachine.Trigger("", this.Status, SampleTriggersEnum.Submit, () => {
                 Console.WriteLine("Submitted");
+                SubmitCallCount++;
             });
         }
     }
