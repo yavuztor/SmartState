@@ -15,7 +15,7 @@ namespace SmartState
         public TState CurrentState { get; private set; }
 
 
-        public IReadOnlyList<Transition<TState, TTrigger>> TransitionHistory { get; }
+        public IReadOnlyList<Transition<TState, TTrigger>> TransitionHistory  => transitions.AsReadOnly();
 
         internal void AddTransition(Transition<TState, TTrigger> transition)
         {

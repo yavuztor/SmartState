@@ -10,7 +10,7 @@ namespace SmartState.UnitTests.StateMachine
         public void UpdateStateHistory()
         {
             // Arrange
-            var obj = new SampleStateful();
+            var obj = new SampleStateful(true);
 
             // Act
             obj.Submit();
@@ -20,13 +20,29 @@ namespace SmartState.UnitTests.StateMachine
         }
 
         [Fact]
-        public void ThrowInvalidStateException_IfTriggerIsInvalidForState()
+        public void ThrowInvalidStateException_IfTriggerIsInvalidForState_And_IfThrowsInvalidStateExceptionIsTrue()
         {
             // Arrange
-            var obj = new SampleStateful();
+            var obj = new SampleStateful(true);
 
             // Assert
             Assert.Throws<InvalidStateException<SampleStatesEnum, SampleTriggersEnum>>(() => obj.Approve());
+        }
+
+        [Fact]
+        public void NotThrowException_IfTriggerIsInvalidForState_But_IfThrowsInvalidStateExceptionIsFalse() 
+        {
+            // Arrange
+            var obj = new SampleStateful(false);
+            var state = obj.StateHistory.CurrentState;
+            var historyCount = obj.StateHistory.TransitionHistory.Count;
+
+            // Act
+            obj.Approve();
+
+            //Assert
+            Assert.Equal(state, obj.StateHistory.CurrentState);
+            Assert.Equal(historyCount, obj.StateHistory.TransitionHistory.Count);
         }
     }
 }

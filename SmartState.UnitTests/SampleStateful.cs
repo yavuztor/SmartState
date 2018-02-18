@@ -37,8 +37,9 @@ namespace SmartState.UnitTests {
                     .Trigger(SampleTriggersEnum.Save).TransitsStateTo(SampleStatesEnum.Draft)
                 .Build();
         }
-        public SampleStateful() 
+        public SampleStateful(bool throwExceptions) 
         {
+            stateMachine.ThrowsInvalidStateException = throwExceptions;
             StateHistory = new StateHistory<SampleStatesEnum, SampleTriggersEnum>(SampleStatesEnum.Draft);
         }
 
