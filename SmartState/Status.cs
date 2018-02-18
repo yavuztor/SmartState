@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 namespace SmartState 
 {
-    public class StateHistory<TState, TTrigger>
+    public class Status<TState, TTrigger>
     {
         private readonly List<Transition<TState, TTrigger>> transitions;
 
-        public StateHistory(TState initialState) 
+        public Status(TState initialState) 
         {
             CurrentState = initialState;
             transitions = new List<Transition<TState, TTrigger>>();

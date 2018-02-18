@@ -40,19 +40,19 @@ namespace SmartState.UnitTests {
         public SampleStateful(bool throwExceptions) 
         {
             stateMachine.ThrowsInvalidStateException = throwExceptions;
-            StateHistory = new StateHistory<SampleStatesEnum, SampleTriggersEnum>(SampleStatesEnum.Draft);
+            Status = new Status<SampleStatesEnum, SampleTriggersEnum>(SampleStatesEnum.Draft);
         }
 
         public void Submit() {
-            stateMachine.Trigger(this.StateHistory, SampleTriggersEnum.Submit, () => {
+            stateMachine.Trigger(this.Status, SampleTriggersEnum.Submit, () => {
                 Console.WriteLine("Submitted");
             });
         }
 
-        public StateHistory<SampleStatesEnum, SampleTriggersEnum> StateHistory { get; private set; }
+        public Status<SampleStatesEnum, SampleTriggersEnum> Status { get; private set; }
 
         public void SubmitWithComment(string comment) {
-            stateMachine.Trigger(this.StateHistory, SampleTriggersEnum.Submit, () => {
+            stateMachine.Trigger(this.Status, SampleTriggersEnum.Submit, () => {
                 Console.WriteLine($"Submitted with comment '{comment}'");
             });
         }
@@ -62,19 +62,19 @@ namespace SmartState.UnitTests {
         }
 
         public void Save() {
-            stateMachine.Trigger(this.StateHistory, SampleTriggersEnum.Save, () => {
+            stateMachine.Trigger(this.Status, SampleTriggersEnum.Save, () => {
                 Console.WriteLine("Saved");
             });
         }
 
         public void Reject() {
-            stateMachine.Trigger(this.StateHistory, SampleTriggersEnum.Reject, () => {            
+            stateMachine.Trigger(this.Status, SampleTriggersEnum.Reject, () => {            
                 Console.WriteLine("Rejected");
             });
         }
 
         public void Approve() {
-            stateMachine.Trigger(this.StateHistory, SampleTriggersEnum.Approve, () => {
+            stateMachine.Trigger(this.Status, SampleTriggersEnum.Approve, () => {
                 Console.WriteLine("Approved");
             });
         }

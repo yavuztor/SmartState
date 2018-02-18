@@ -14,7 +14,7 @@ namespace SmartState.UnitTests.StateMachineBuilder
                 .Trigger(SampleTriggersEnum.Submit);
             
             // Act
-            var guarded = trigger.When<SampleStateful>(z => z.StateHistory != null);
+            var guarded = trigger.When<SampleStateful>(z => z.Status != null);
 
             // Assert
             Assert.True(guarded is IBuildTransit<SampleStatesEnum, SampleTriggersEnum>);

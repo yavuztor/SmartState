@@ -24,20 +24,20 @@ namespace SmartState
             return new StateMachineBuilder<TState, TTrigger>(initialState);
         }
 
-        public void Trigger(StateHistory<TState, TTrigger> stateHistory, TTrigger trigger, Action action)
+        public void Trigger(Status<TState, TTrigger> Status, TTrigger trigger, Action action)
         {
-            var state = states.First(z => z.Name.Equals(stateHistory.CurrentState));
+            var state = states.First(z => z.Name.Equals(Status.CurrentState));
             var transition = state.Transitions.FirstOrDefault(z => z.Trigger.Equals(trigger));
             if (transition == null)
             {
                 if (this.ThrowsInvalidStateException) 
-                    throw new InvalidStateException<TState, TTrigger>(stateHistory.CurrentState, trigger);
+                    throw new InvalidStateException<TState, TTrigger>(Status.CurrentState, trigger);
                 return;
             }
 
             action();
             
-            stateHistory.AddTransition(transition);
+            Status.AddTransition(transition);
         }
     }
 

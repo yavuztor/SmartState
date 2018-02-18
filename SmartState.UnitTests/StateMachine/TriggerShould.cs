@@ -7,7 +7,7 @@ namespace SmartState.UnitTests.StateMachine
     public class TriggerShould
     {
         [Fact]
-        public void UpdateStateHistory()
+        public void UpdateStatus()
         {
             // Arrange
             var obj = new SampleStateful(true);
@@ -16,7 +16,7 @@ namespace SmartState.UnitTests.StateMachine
             obj.Submit();
 
             // Assert
-            Assert.Equal(SampleStatesEnum.Submitted, obj.StateHistory.CurrentState);
+            Assert.Equal(SampleStatesEnum.Submitted, obj.Status.CurrentState);
         }
 
         [Fact]
@@ -34,15 +34,15 @@ namespace SmartState.UnitTests.StateMachine
         {
             // Arrange
             var obj = new SampleStateful(false);
-            var state = obj.StateHistory.CurrentState;
-            var historyCount = obj.StateHistory.TransitionHistory.Count;
+            var state = obj.Status.CurrentState;
+            var historyCount = obj.Status.TransitionHistory.Count;
 
             // Act
             obj.Approve();
 
             //Assert
-            Assert.Equal(state, obj.StateHistory.CurrentState);
-            Assert.Equal(historyCount, obj.StateHistory.TransitionHistory.Count);
+            Assert.Equal(state, obj.Status.CurrentState);
+            Assert.Equal(historyCount, obj.Status.TransitionHistory.Count);
         }
     }
 }
