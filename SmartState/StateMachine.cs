@@ -17,7 +17,7 @@ namespace SmartState
             this.initialState = initialState;
         }
 
-        public bool ThrowsInvalidStateException { get; set; } = true;
+        public bool ThrowsInvalidStateException { get; set; } = false;
 
         public static IBuildState<TState, TTrigger> InitialState(TState initialState)
         {
