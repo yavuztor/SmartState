@@ -27,7 +27,7 @@ namespace SmartState
         public void Trigger(object stateful, Status<TState, TTrigger> Status, TTrigger trigger, Action action)
         {
             var oldState = states.First(z => z.Name.Equals(Status.CurrentState));
-            var transition = oldState.Transitions.FirstOrDefault(z => z.Trigger.Equals(trigger));
+            var transition = oldState.Transitions.FirstOrDefault(z => z.Trigger.Equals(trigger) && z.Guard(stateful));
             if (transition == null)
             {
                 if (this.ThrowsInvalidStateException) 
@@ -35,12 +35,8 @@ namespace SmartState
                 return;
             }
 
-            // Action should execute even if trigger is guarded.
             action();
             
-            // No state transition if guard fails...
-            if (!transition.Guard(stateful)) return;
-
             Status.AddTransition(transition);
 
             if (!Status.CurrentState.Equals(oldState.Name)) {

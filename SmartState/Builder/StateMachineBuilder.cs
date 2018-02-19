@@ -37,7 +37,7 @@ namespace SmartState.Builder
 
         private ISet<State<TState, TTrigger>> states = new HashSet<State<TState, TTrigger>>();
 
-        private ISet<Transition<TState, TTrigger>> currentTransitions = new HashSet<Transition<TState, TTrigger>>();
+        private List<Transition<TState, TTrigger>> currentTransitions = new List<Transition<TState, TTrigger>>();
         private Func<object, bool> triggerGuard;
 
         private Action<object> entryAction;
@@ -59,7 +59,7 @@ namespace SmartState.Builder
             states.Add(new State<TState, TTrigger>(currentState, currentTransitions, entryAction, exitAction));
             if (initialState == null) initialState = states.First();
             currentState = fromState;
-            currentTransitions = new HashSet<Transition<TState, TTrigger>>();
+            currentTransitions = new List<Transition<TState, TTrigger>>();
             entryAction = null;
             exitAction = null;
             return this;
@@ -98,8 +98,7 @@ namespace SmartState.Builder
 
         public IBuildTransit<TState, TTrigger> When<T>(Func<T, bool> guard) where T : class
         {
-            // If transition-time object is not expected type, this guard should have no effect.
-            this.triggerGuard = (object o) => (o is T) ? guard(o as T) : true;
+            this.triggerGuard = (object o) => (o is T) && guard(o as T);
             return this;
         }
     }

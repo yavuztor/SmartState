@@ -9,12 +9,14 @@ namespace SmartState
             Trigger = trigger;
             ToState = toState;
             FromState = fromState;
-            Guard = guard;
+            Guard = guard ?? GuardSatisfied;
         }
 
         public TState ToState { get; }
         public TState FromState { get; }
         public Func<object, bool> Guard { get; }
         public TTrigger Trigger { get; }
+
+        private static bool GuardSatisfied(object obj) { return true; }
     }
 }

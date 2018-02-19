@@ -62,7 +62,7 @@ namespace SmartState.UnitTests.StateMachine
         [Fact]
         public void NotExecuteActionIfObjectIsNotCorrectType() {
             // Arrange
-            var obj = new SampleChild(true);
+            var obj = new SampleChild(false);
 
             // Act
             obj.Submit();
@@ -73,29 +73,12 @@ namespace SmartState.UnitTests.StateMachine
         }
 
         [Fact]
-        public void NotConsiderTriggerGuardIfObjectIsNotCorrectType() 
-        {
-            // Arrange
-            var obj = new SampleChild(true);
-            obj.ShouldAllowTransition = false;
-            var expectedCount = obj.Status.TransitionHistory.Count + 1;
-
-            // Act
-            obj.Submit();
-            
-            // Assert
-            Assert.Equal(expectedCount, obj.Status.TransitionHistory.Count);
-            Assert.Equal(SampleStatesEnum.Submitted, obj.Status.CurrentState);
-        }
-
-        [Fact]
         public void ConsiderTriggerGuardIfObjectIsCorrectType() 
         {
             // Arrange
-            var obj = new SampleStateful(true);
+            var obj = new SampleStateful(false);
             obj.ShouldAllowTransition = false;
             var expectedCount = obj.Status.TransitionHistory.Count;
-            var expectedSubmitCallCount = obj.SubmitCallCount + 1;
 
             // Act
             obj.Submit();
@@ -103,6 +86,20 @@ namespace SmartState.UnitTests.StateMachine
             // Assert
             Assert.Equal(expectedCount, obj.Status.TransitionHistory.Count);
             Assert.Equal(SampleStatesEnum.Draft, obj.Status.CurrentState);
+        }
+
+        [Fact]
+        public void NotInvokeActionIfNoTransitionIsAvailable() 
+        {
+            // Arrange
+            var obj = new SampleStateful(false);
+            obj.ShouldAllowTransition = false;
+            var expectedSubmitCallCount = obj.SubmitCallCount;
+
+            // Act
+            obj.Submit();
+            
+            // Assert
             Assert.Equal(expectedSubmitCallCount, obj.SubmitCallCount);
         }
     }
