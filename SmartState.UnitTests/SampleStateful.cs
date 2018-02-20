@@ -43,8 +43,10 @@ namespace SmartState.UnitTests {
         public SampleStateful(bool throwExceptions) 
         {
             stateMachine.ThrowsInvalidStateException = throwExceptions;
-            Status = new Status<SampleStatesEnum, SampleTriggersEnum>(SampleStatesEnum.Draft);
+            Status = stateMachine.InitializeStatus(this);
         }
+
+        public Status<SampleStatesEnum, SampleTriggersEnum> Status { get; private set; }
 
         public bool EntryActionCalled { get; set; } = false;
 
@@ -60,8 +62,6 @@ namespace SmartState.UnitTests {
                 SubmitCallCount++;
             });
         }
-
-        public Status<SampleStatesEnum, SampleTriggersEnum> Status { get; private set; }
 
         public void SubmitWithComment(string comment) {
             stateMachine.Trigger(this, this.Status, SampleTriggersEnum.Submit, () => {

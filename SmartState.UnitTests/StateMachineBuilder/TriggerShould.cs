@@ -6,7 +6,7 @@ namespace SmartState.UnitTests.StateMachineBuilder
 {
     public class TriggerShould
     {
-        private IBuildState<SampleStatesEnum, SampleTriggersEnum> state = StateMachine<SampleStatesEnum, SampleTriggersEnum>.InitialState(SampleStatesEnum.Draft);
+        private IBuildInitialState<SampleStatesEnum, SampleTriggersEnum> state = StateMachine<SampleStatesEnum, SampleTriggersEnum>.InitialState(SampleStatesEnum.Draft);
         
         [Fact]
         public void ReturnATriggerBuilder()

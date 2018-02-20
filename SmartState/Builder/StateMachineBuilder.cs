@@ -16,17 +16,21 @@ namespace SmartState.Builder
         IBuildTransit<TState, TTrigger> When<T>(Func<T, bool> guard) where T:class;
     }
     
-    public interface IBuildState<TState, TTrigger> {
+    public interface IBuildInitialState<TState, TTrigger> {
         IBuildTrigger<TState, TTrigger> Trigger(TTrigger trigger);
-        IBuildState<TState, TTrigger> FromState(TState fromState);
 
-        IBuildState<TState, TTrigger> OnEntry<T>(Action<T> action) where T:class;
+        IBuildState<TState, TTrigger> FromState(TState fromState);
 
         IBuildState<TState, TTrigger> OnExit<T>(Action<T> action) where T:class;
 
         TState CurrentState { get; }
 
         StateMachine<TState, TTrigger> Build();
+    }
+
+    public interface IBuildState<TState, TTrigger>:IBuildInitialState<TState, TTrigger>
+    {
+        IBuildState<TState, TTrigger> OnEntry<T>(Action<T> action) where T:class;
     }
 
     public class StateMachineBuilder<TState, TTrigger> : IBuildState<TState, TTrigger>, IBuildTrigger<TState, TTrigger>
@@ -40,8 +44,8 @@ namespace SmartState.Builder
         private List<Transition<TState, TTrigger>> currentTransitions = new List<Transition<TState, TTrigger>>();
         private Func<object, bool> triggerGuard;
 
-        private Action<object> entryAction;
-        private Action<object> exitAction;
+        private List<Action<object>> entryActions = new List<Action<object>>();
+        private List<Action<object>> exitActions = new List<Action<object>>();
 
         public StateMachineBuilder(TState initialState) {
             this.currentState = initialState;
@@ -56,30 +60,32 @@ namespace SmartState.Builder
 
         public IBuildState<TState, TTrigger> FromState(TState fromState)
         {
-            states.Add(new State<TState, TTrigger>(currentState, currentTransitions, entryAction, exitAction));
+            states.Add(new State<TState, TTrigger>(currentState, currentTransitions, entryActions, exitActions));
             if (initialState == null) initialState = states.First();
             currentState = fromState;
             currentTransitions = new List<Transition<TState, TTrigger>>();
-            entryAction = null;
-            exitAction = null;
+            entryActions = new List<Action<object>>();
+            exitActions = new List<Action<object>>();
             return this;
         }
 
         public IBuildState<TState, TTrigger> OnEntry<T>(Action<T> action) where T:class
         {
-            entryAction = (object o) => 
+            Action<object> entryAction = (object o) => 
             {
                 if (o is T) action(o as T);
             };
+            entryActions.Add(entryAction);
             return this;
         }
 
         public IBuildState<TState, TTrigger> OnExit<T>(Action<T> action) where T:class
         {
-            exitAction = (object o) => 
+            Action<object> exitAction = (object o) => 
             {
                 if (o is T) action(o as T);
             };
+            exitActions.Add(exitAction);
             return this;
         }
 

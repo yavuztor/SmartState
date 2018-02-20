@@ -12,7 +12,9 @@ namespace SmartState.UnitTests.StateMachineBuilder
             // Arrange
             // Act
             var machine = StateMachine<SampleStatesEnum, SampleTriggersEnum>.InitialState(SampleStatesEnum.Draft)
-                .OnEntry<SampleStateful>(a => a.EntryActionCalled = true);
+                .Trigger(SampleTriggersEnum.Submit).TransitsStateTo(SampleStatesEnum.Submitted)
+                .FromState(SampleStatesEnum.Submitted)
+                    .OnEntry<SampleStateful>(a => a.EntryActionCalled = true);
 
             // Assert
             Assert.True(machine is IBuildState<SampleStatesEnum, SampleTriggersEnum>);

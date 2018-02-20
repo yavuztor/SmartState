@@ -19,7 +19,7 @@ namespace SmartState
 
         public bool ThrowsInvalidStateException { get; set; } = false;
 
-        public static IBuildState<TState, TTrigger> InitialState(TState initialState)
+        public static IBuildInitialState<TState, TTrigger> InitialState(TState initialState)
         {
             return new StateMachineBuilder<TState, TTrigger>(initialState);
         }
@@ -45,7 +45,11 @@ namespace SmartState
                 newState.EntryAction(stateful);
             }
         }
+        public Status<TState, TTrigger> InitializeStatus(object subject) {
+            return new Status<TState, TTrigger>(this.initialState.Name);
+        }
     }
+
 
     public class InvalidStateException<TState, TTrigger> : Exception 
     {
