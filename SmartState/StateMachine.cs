@@ -45,7 +45,7 @@ namespace SmartState
                 newState.EntryAction(stateful);
             }
         }
-        public Status<TState, TTrigger> InitializeStatus(object subject) {
+        public Status<TState, TTrigger> InitialStatus() {
             return new Status<TState, TTrigger>(this.initialState.Name);
         }
     }

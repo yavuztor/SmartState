@@ -43,7 +43,7 @@ namespace SmartState.UnitTests {
         public SampleStateful(bool throwExceptions) 
         {
             stateMachine.ThrowsInvalidStateException = throwExceptions;
-            Status = stateMachine.InitializeStatus(this);
+            Status = stateMachine.InitialStatus();
         }
 
         public Status<SampleStatesEnum, SampleTriggersEnum> Status { get; private set; }
