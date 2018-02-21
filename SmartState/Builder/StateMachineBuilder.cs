@@ -6,34 +6,7 @@ using System.Reflection;
 
 namespace SmartState.Builder
 {
-    public interface IBuildTransit<TState, TTrigger>
-    {
-        IBuildState<TState, TTrigger> TransitsStateTo(TState newState);
-    }
-
-    public interface IBuildTrigger<TState, TTrigger>:IBuildTransit<TState, TTrigger>
-    {
-        IBuildTransit<TState, TTrigger> When<T>(Func<T, bool> guard) where T:class;
-    }
-    
-    public interface IBuildInitialState<TState, TTrigger> {
-        IBuildTrigger<TState, TTrigger> Trigger(TTrigger trigger);
-
-        IBuildState<TState, TTrigger> FromState(TState fromState);
-
-        IBuildState<TState, TTrigger> OnExit<T>(Action<T> action) where T:class;
-
-        TState CurrentState { get; }
-
-        StateMachine<TState, TTrigger> Build();
-    }
-
-    public interface IBuildState<TState, TTrigger>:IBuildInitialState<TState, TTrigger>
-    {
-        IBuildState<TState, TTrigger> OnEntry<T>(Action<T> action) where T:class;
-    }
-
-    public class StateMachineBuilder<TState, TTrigger> : IBuildState<TState, TTrigger>, IBuildTrigger<TState, TTrigger>
+    public class StateMachineBuilder<TState, TTrigger> : IBuildState<TState, TTrigger>, IBuildInitialState<TState, TTrigger>, IBuildTrigger<TState, TTrigger>
     {
         private State<TState, TTrigger> initialState;
         private TState currentState;
@@ -52,6 +25,8 @@ namespace SmartState.Builder
         }
 
         public TState CurrentState => currentState;
+
+        TState IBuildInitialState<TState, TTrigger>.CurrentState => currentState;
 
         public StateMachine<TState, TTrigger> Build()
         {
@@ -106,6 +81,26 @@ namespace SmartState.Builder
         {
             this.triggerGuard = (object o) => (o is T) && guard(o as T);
             return this;
+        }
+
+        StateMachine<TState, TTrigger> IBuildInitialState<TState, TTrigger>.Build()
+        {
+            return this.Build();
+        }
+
+        IBuildState<TState, TTrigger> IBuildInitialState<TState, TTrigger>.FromState(TState fromState)
+        {
+            return this.FromState(fromState);
+        }
+
+        IBuildInitialState<TState, TTrigger> IBuildInitialState<TState, TTrigger>.OnExit<T>(Action<T> action)
+        {
+            return this.OnExit<T>(action);
+        }
+
+        IBuildTrigger<TState, TTrigger> IBuildInitialState<TState, TTrigger>.Trigger(TTrigger trigger)
+        {
+            return this.Trigger(trigger);
         }
     }
 }
