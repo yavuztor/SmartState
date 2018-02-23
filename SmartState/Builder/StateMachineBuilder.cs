@@ -83,24 +83,10 @@ namespace SmartState.Builder
             return this;
         }
 
-        StateMachine<TState, TTrigger> IBuildInitialState<TState, TTrigger>.Build()
-        {
-            return this.Build();
-        }
-
-        IBuildState<TState, TTrigger> IBuildInitialState<TState, TTrigger>.FromState(TState fromState)
-        {
-            return this.FromState(fromState);
-        }
-
         IBuildInitialState<TState, TTrigger> IBuildInitialState<TState, TTrigger>.OnExit<T>(Action<T> action)
         {
             return this.OnExit<T>(action);
         }
 
-        IBuildTrigger<TState, TTrigger> IBuildInitialState<TState, TTrigger>.Trigger(TTrigger trigger)
-        {
-            return this.Trigger(trigger);
-        }
     }
 }
