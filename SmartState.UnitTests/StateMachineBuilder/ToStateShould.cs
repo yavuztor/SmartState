@@ -10,13 +10,13 @@ namespace SmartState.UnitTests.StateMachineBuilder
         public void ReturnAStateBuilder()
         {
             // Arrange
-            var trigger = StateMachine<SampleStatesEnum, SampleTriggersEnum>.InitialState(SampleStatesEnum.Draft).Trigger(SampleTriggersEnum.Submit);
+            var trigger = StateMachine<SampleStates, SampleTriggers>.OnInitialState(SampleStates.Draft).Triggering(SampleTriggers.Submit);
 
             // Act
-            var state = trigger.TransitsStateTo(SampleStatesEnum.Submitted);
+            var state = trigger.TransitionsTo(SampleStates.Submitted);
 
             // Assert
-            Assert.True(state is IBuildState<SampleStatesEnum, SampleTriggersEnum>);
+            Assert.True(state is IBuildState<SampleStates, SampleTriggers>);
         }
     }
 }

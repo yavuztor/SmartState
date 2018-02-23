@@ -10,21 +10,21 @@ namespace SmartState.UnitTests.StateMachineBuilder
         public void BuildASimpleFSM()
         {
             // Arrange
-            var machine = StateMachine<SampleStatesEnum, SampleTriggersEnum>
-            .InitialState(SampleStatesEnum.Draft)
-                .Trigger(SampleTriggersEnum.Submit).TransitsStateTo(SampleStatesEnum.Submitted)
-                .Trigger(SampleTriggersEnum.Save).TransitsStateTo(SampleStatesEnum.Draft)
-            .FromState(SampleStatesEnum.Submitted)
-                .Trigger(SampleTriggersEnum.Approve).TransitsStateTo(SampleStatesEnum.Approved)
-                .Trigger(SampleTriggersEnum.Reject).TransitsStateTo(SampleStatesEnum.Rejected)
-            .FromState(SampleStatesEnum.Rejected)
-                .Trigger(SampleTriggersEnum.Save).TransitsStateTo(SampleStatesEnum.Draft);
+            var machine = StateMachine<SampleStates, SampleTriggers>
+            .OnInitialState(SampleStates.Draft)
+                .Triggering(SampleTriggers.Submit).TransitionsTo(SampleStates.Submitted)
+                .Triggering(SampleTriggers.Save).TransitionsTo(SampleStates.Draft)
+            .OnState(SampleStates.Submitted)
+                .Triggering(SampleTriggers.Approve).TransitionsTo(SampleStates.Approved)
+                .Triggering(SampleTriggers.Reject).TransitionsTo(SampleStates.Rejected)
+            .OnState(SampleStates.Rejected)
+                .Triggering(SampleTriggers.Save).TransitionsTo(SampleStates.Draft);
 
             // Act
             var fsm = machine.Build();
 
             // Assert
-            Assert.True(fsm is StateMachine<SampleStatesEnum, SampleTriggersEnum>);
+            Assert.True(fsm is StateMachine<SampleStates, SampleTriggers>);
         }
     }
 }

@@ -11,10 +11,10 @@ namespace SmartState.UnitTests.StateMachineBuilder
         {
             // Arrange
             // Act
-            var machine = StateMachine<SampleStatesEnum, SampleTriggersEnum>.InitialState(SampleStatesEnum.Draft);
+            var machine = StateMachine<SampleStates, SampleTriggers>.OnInitialState(SampleStates.Draft);
 
             // Assert
-            Assert.True(machine is IBuildState<SampleStatesEnum, SampleTriggersEnum>);
+            Assert.True(machine is IBuildState<SampleStates, SampleTriggers>);
         }
     }
 }

@@ -6,34 +6,34 @@ namespace SmartState.UnitTests.StateMachineBuilder
 {
     public class TriggerShould
     {
-        private IBuildInitialState<SampleStatesEnum, SampleTriggersEnum> state = StateMachine<SampleStatesEnum, SampleTriggersEnum>.InitialState(SampleStatesEnum.Draft);
+        private IBuildInitialState<SampleStates, SampleTriggers> state = StateMachine<SampleStates, SampleTriggers>.OnInitialState(SampleStates.Draft);
         
         [Fact]
         public void ReturnATriggerBuilder()
         {
             // Act
-            var trigger = state.Trigger(SampleTriggersEnum.Submit);
+            var trigger = state.Triggering(SampleTriggers.Submit);
 
             // Assert
-            Assert.True(trigger is IBuildTrigger<SampleStatesEnum, SampleTriggersEnum>);
+            Assert.True(trigger is IBuildTrigger<SampleStates, SampleTriggers>);
         }
 
         [Fact]
         public void CanRegisterTriggerWithParameters() {
             // Act
-            var trigger = state.Trigger(SampleTriggersEnum.SubmitWithComment);
+            var trigger = state.Triggering(SampleTriggers.SubmitWithComment);
 
             // Assert
-            Assert.True(trigger is IBuildTrigger<SampleStatesEnum, SampleTriggersEnum>);
+            Assert.True(trigger is IBuildTrigger<SampleStates, SampleTriggers>);
         }
 
         [Fact]
         public void CanRegisterOverloadedTrigger() {
             // Act
-            var trigger = state.Trigger(SampleTriggersEnum.Submit);
+            var trigger = state.Triggering(SampleTriggers.Submit);
 
             // Assert
-            Assert.True(trigger is IBuildTrigger<SampleStatesEnum, SampleTriggersEnum>);
+            Assert.True(trigger is IBuildTrigger<SampleStates, SampleTriggers>);
         }
     }
 }

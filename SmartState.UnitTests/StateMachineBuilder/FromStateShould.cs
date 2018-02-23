@@ -10,15 +10,15 @@ namespace SmartState.UnitTests.StateMachineBuilder
         public void SetTheCurrentStateOfTheBuilder()
         {
             // Arrange
-            var machine = StateMachine<SampleStatesEnum, SampleTriggersEnum>.InitialState(SampleStatesEnum.Draft)
-                .Trigger(SampleTriggersEnum.Submit).TransitsStateTo(SampleStatesEnum.Submitted);
+            var machine = StateMachine<SampleStates, SampleTriggers>.OnInitialState(SampleStates.Draft)
+                .Triggering(SampleTriggers.Submit).TransitionsTo(SampleStates.Submitted);
 
             //Act
-            var state = machine.FromState(SampleStatesEnum.Submitted);
+            var state = machine.OnState(SampleStates.Submitted);
 
             // Assert
-            Assert.True(machine is IBuildState<SampleStatesEnum, SampleTriggersEnum>);
-            Assert.Equal(SampleStatesEnum.Submitted, machine.CurrentState);
+            Assert.True(machine is IBuildState<SampleStates, SampleTriggers>);
+            Assert.Equal(SampleStates.Submitted, machine.CurrentState);
         }
     }
 }

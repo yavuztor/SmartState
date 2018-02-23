@@ -8,7 +8,7 @@ namespace SmartState.Builder
 {
     public interface IBuildTransit<TState, TTrigger>
     {
-        IBuildState<TState, TTrigger> TransitsStateTo(TState newState);
+        IBuildState<TState, TTrigger> TransitionsTo(TState newState);
     }
 
     public interface IBuildTrigger<TState, TTrigger>:IBuildTransit<TState, TTrigger>
@@ -17,11 +17,11 @@ namespace SmartState.Builder
     }
     
     public interface IBuildInitialState<TState, TTrigger> {
-        IBuildTrigger<TState, TTrigger> Trigger(TTrigger trigger);
+        IBuildTrigger<TState, TTrigger> Triggering(TTrigger trigger);
 
-        IBuildState<TState, TTrigger> FromState(TState fromState);
+        IBuildState<TState, TTrigger> OnState(TState fromState);
 
-        IBuildInitialState<TState, TTrigger> OnExit<T>(Action<T> action) where T:class;
+        IBuildInitialState<TState, TTrigger> WithExitAction<T>(Action<T> action) where T:class;
 
         TState CurrentState { get; }
 
@@ -30,8 +30,8 @@ namespace SmartState.Builder
 
     public interface IBuildState<TState, TTrigger>:IBuildInitialState<TState, TTrigger>
     {
-        IBuildState<TState, TTrigger> OnEntry<T>(Action<T> action) where T:class;
+        IBuildState<TState, TTrigger> WithEntryAction<T>(Action<T> action) where T:class;
 
-        new IBuildState<TState, TTrigger> OnExit<T>(Action<T> action) where T:class;
+        new IBuildState<TState, TTrigger> WithExitAction<T>(Action<T> action) where T:class;
     }
 }

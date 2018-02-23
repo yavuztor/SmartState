@@ -11,13 +11,13 @@ namespace SmartState.UnitTests.StateMachineBuilder
         {
             // Arrange
             // Act
-            var machine = StateMachine<SampleStatesEnum, SampleTriggersEnum>.InitialState(SampleStatesEnum.Draft)
-                .Trigger(SampleTriggersEnum.Submit).TransitsStateTo(SampleStatesEnum.Submitted)
-                .FromState(SampleStatesEnum.Submitted)
-                    .OnEntry<SampleStateful>(a => a.EntryActionCalled = true);
+            var machine = StateMachine<SampleStates, SampleTriggers>.OnInitialState(SampleStates.Draft)
+                .Triggering(SampleTriggers.Submit).TransitionsTo(SampleStates.Submitted)
+                .OnState(SampleStates.Submitted)
+                    .WithEntryAction<SampleStateful>(a => a.EntryActionCalled = true);
 
             // Assert
-            Assert.True(machine is IBuildState<SampleStatesEnum, SampleTriggersEnum>);
+            Assert.True(machine is IBuildState<SampleStates, SampleTriggers>);
         }
     }
 }

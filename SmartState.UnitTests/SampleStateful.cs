@@ -3,14 +3,14 @@ namespace SmartState.UnitTests {
     using System;
     using SmartState;
     
-    public enum SampleStatesEnum {
+    public enum SampleStates {
         Draft,
         Submitted,
         Approved,
         Rejected
     }
 
-    public enum SampleTriggersEnum {
+    public enum SampleTriggers {
         Submit,
         SubmitWithComment,
         Save,
@@ -21,23 +21,23 @@ namespace SmartState.UnitTests {
 
     public class SampleStateful
     {
-        protected static SmartState.StateMachine<SampleStatesEnum, SampleTriggersEnum> stateMachine;
+        protected static SmartState.StateMachine<SampleStates, SampleTriggers> stateMachine;
         static SampleStateful() 
         {
-            stateMachine = SmartState.StateMachine<SampleStatesEnum, SampleTriggersEnum>
-                .InitialState(SampleStatesEnum.Draft).OnExit<SampleStateful>(z => z.ExitActionCalled = true)
-                    .Trigger(SampleTriggersEnum.Submit)
+            stateMachine = SmartState.StateMachine<SampleStates, SampleTriggers>
+                .OnInitialState(SampleStates.Draft).WithExitAction<SampleStateful>(z => z.ExitActionCalled = true)
+                    .Triggering(SampleTriggers.Submit)
                         .When<SampleStateful>(z => z.ShouldAllowTransition)
-                        .TransitsStateTo(SampleStatesEnum.Submitted)
-                    .Trigger(SampleTriggersEnum.SubmitWithComment).TransitsStateTo(SampleStatesEnum.Submitted)
+                        .TransitionsTo(SampleStates.Submitted)
+                    .Triggering(SampleTriggers.SubmitWithComment).TransitionsTo(SampleStates.Submitted)
 
-                .FromState(SampleStatesEnum.Submitted).OnEntry<SampleStateful>(z => z.EntryActionCalled = true)
-                    .Trigger(SampleTriggersEnum.Approve).TransitsStateTo(SampleStatesEnum.Approved)
-                    .Trigger(SampleTriggersEnum.Save).TransitsStateTo(SampleStatesEnum.Draft)
-                    .Trigger(SampleTriggersEnum.Reject).TransitsStateTo(SampleStatesEnum.Rejected)
+                .OnState(SampleStates.Submitted).WithEntryAction<SampleStateful>(z => z.EntryActionCalled = true)
+                    .Triggering(SampleTriggers.Approve).TransitionsTo(SampleStates.Approved)
+                    .Triggering(SampleTriggers.Save).TransitionsTo(SampleStates.Draft)
+                    .Triggering(SampleTriggers.Reject).TransitionsTo(SampleStates.Rejected)
 
-                .FromState(SampleStatesEnum.Rejected)
-                    .Trigger(SampleTriggersEnum.Save).TransitsStateTo(SampleStatesEnum.Draft)
+                .OnState(SampleStates.Rejected)
+                    .Triggering(SampleTriggers.Save).TransitionsTo(SampleStates.Draft)
                 .Build();
         }
         public SampleStateful(bool throwExceptions) 
@@ -46,7 +46,7 @@ namespace SmartState.UnitTests {
             Status = stateMachine.InitialStatus();
         }
 
-        public Status<SampleStatesEnum, SampleTriggersEnum> Status { get; private set; }
+        public Status<SampleStates, SampleTriggers> Status { get; private set; }
 
         public bool EntryActionCalled { get; set; } = false;
 
@@ -57,14 +57,14 @@ namespace SmartState.UnitTests {
         public int SubmitCallCount { get; set; } = 0;
         
         public virtual void Submit() {
-            stateMachine.Trigger(this, this.Status, SampleTriggersEnum.Submit, () => {
+            stateMachine.Trigger(this, this.Status, SampleTriggers.Submit, () => {
                 Console.WriteLine("Submitted");
                 SubmitCallCount++;
             });
         }
 
         public void SubmitWithComment(string comment) {
-            stateMachine.Trigger(this, this.Status, SampleTriggersEnum.Submit, () => {
+            stateMachine.Trigger(this, this.Status, SampleTriggers.Submit, () => {
                 Console.WriteLine($"Submitted with comment '{comment}'");
             });
         }
@@ -74,19 +74,19 @@ namespace SmartState.UnitTests {
         }
 
         public void Save() {
-            stateMachine.Trigger(this, this.Status, SampleTriggersEnum.Save, () => {
+            stateMachine.Trigger(this, this.Status, SampleTriggers.Save, () => {
                 Console.WriteLine("Saved");
             });
         }
 
         public void Reject() {
-            stateMachine.Trigger(this, this.Status, SampleTriggersEnum.Reject, () => {            
+            stateMachine.Trigger(this, this.Status, SampleTriggers.Reject, () => {            
                 Console.WriteLine("Rejected");
             });
         }
 
         public void Approve() {
-            stateMachine.Trigger(this, this.Status, SampleTriggersEnum.Approve, () => {
+            stateMachine.Trigger(this, this.Status, SampleTriggers.Approve, () => {
                 Console.WriteLine("Approved");
             });
         }
@@ -100,7 +100,7 @@ namespace SmartState.UnitTests {
 
         override public void Submit()
         {
-            stateMachine.Trigger("", this.Status, SampleTriggersEnum.Submit, () => {
+            stateMachine.Trigger("", this.Status, SampleTriggers.Submit, () => {
                 Console.WriteLine("Submitted");
                 SubmitCallCount++;
             });

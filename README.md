@@ -12,25 +12,22 @@ This library aims to make it easy and fun to work with state machines. There are
 With SmartState, you can define your state transitions like this:
 
 ```csharp
-var stateMachine = StateMachine<SampleStatesEnum, SampleTriggersEnum>
-    .InitialState(SampleStatesEnum.Draft).OnExit<SampleStateful>(z => z.ExitActionCalled = true)
-        .Trigger(SampleTriggersEnum.Submit)
+var stateMachine = SmartState.StateMachine<SampleStates, SampleTriggers>
+    .OnInitialState(SampleStates.Draft)
+        .WithExitAction<SampleStateful>(z => z.ExitActionCalled = true)
+        .Triggering(SampleTriggers.Submit)
             .When<SampleStateful>(z => z.ShouldAllowTransition)
-            .TransitsStateTo(SampleStatesEnum.Submitted)
-        .Trigger(SampleTriggersEnum.SubmitWithComment)
-            .TransitsStateTo(SampleStatesEnum.Submitted)
+            .TransitionsTo(SampleStates.Submitted)
+        .Triggering(SampleTriggers.SubmitWithComment).TransitionsTo(SampleStates.Submitted)
 
-    .FromState(SampleStatesEnum.Submitted).OnEntry<SampleStateful>(z => z.EntryActionCalled = true)
-        .Trigger(SampleTriggersEnum.Approve)
-            .TransitsStateTo(SampleStatesEnum.Approved)
-        .Trigger(SampleTriggersEnum.Save)
-            .TransitsStateTo(SampleStatesEnum.Draft)
-        .Trigger(SampleTriggersEnum.Reject)
-            .TransitsStateTo(SampleStatesEnum.Rejected)
+    .OnState(SampleStates.Submitted)
+        .WithEntryAction<SampleStateful>(z => z.EntryActionCalled = true)
+        .Triggering(SampleTriggers.Approve).TransitionsTo(SampleStates.Approved)
+        .Triggering(SampleTriggers.Save).TransitionsTo(SampleStates.Draft)
+        .Triggering(SampleTriggers.Reject).TransitionsTo(SampleStates.Rejected)
 
-    .FromState(SampleStatesEnum.Rejected)
-        .Trigger(SampleTriggersEnum.Save)
-            .TransitsStateTo(SampleStatesEnum.Draft)
+    .OnState(SampleStates.Rejected)
+        .Triggering(SampleTriggers.Save).TransitionsTo(SampleStates.Draft)
     .Build();
 ```
 

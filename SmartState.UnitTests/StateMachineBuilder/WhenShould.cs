@@ -10,14 +10,14 @@ namespace SmartState.UnitTests.StateMachineBuilder
         public void ReturnIBuildTransit()
         {
             // Arrange
-            var trigger = StateMachine<SampleStatesEnum, SampleTriggersEnum>.InitialState(SampleStatesEnum.Draft)
-                .Trigger(SampleTriggersEnum.Submit);
+            var trigger = StateMachine<SampleStates, SampleTriggers>.OnInitialState(SampleStates.Draft)
+                .Triggering(SampleTriggers.Submit);
             
             // Act
             var guarded = trigger.When<SampleStateful>(z => z.Status != null);
 
             // Assert
-            Assert.True(guarded is IBuildTransit<SampleStatesEnum, SampleTriggersEnum>);
+            Assert.True(guarded is IBuildTransit<SampleStates, SampleTriggers>);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace SmartState.UnitTests.StateMachine
             obj.Submit();
 
             // Assert
-            Assert.Equal(SampleStatesEnum.Submitted, obj.Status.CurrentState);
+            Assert.Equal(SampleStates.Submitted, obj.Status.CurrentState);
         }
 
         [Fact]
@@ -26,7 +26,7 @@ namespace SmartState.UnitTests.StateMachine
             var obj = new SampleStateful(true);
 
             // Assert
-            Assert.Throws<InvalidStateException<SampleStatesEnum, SampleTriggersEnum>>(() => obj.Approve());
+            Assert.Throws<InvalidStateException<SampleStates, SampleTriggers>>(() => obj.Approve());
         }
 
         [Fact]
@@ -85,7 +85,7 @@ namespace SmartState.UnitTests.StateMachine
             
             // Assert
             Assert.Equal(expectedCount, obj.Status.TransitionHistory.Count);
-            Assert.Equal(SampleStatesEnum.Draft, obj.Status.CurrentState);
+            Assert.Equal(SampleStates.Draft, obj.Status.CurrentState);
         }
 
         [Fact]

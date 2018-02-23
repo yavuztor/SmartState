@@ -19,7 +19,7 @@ namespace SmartState
 
         public bool ThrowsInvalidStateException { get; set; } = false;
 
-        public static IBuildInitialState<TState, TTrigger> InitialState(TState initialState)
+        public static IBuildInitialState<TState, TTrigger> OnInitialState(TState initialState)
         {
             return new StateMachineBuilder<TState, TTrigger>(initialState);
         }
