@@ -36,10 +36,10 @@ Once the state machine is built, it cannot be changed. It can be used many times
 ```csharp
 // ...
 
-public Status<SampleStatesEnum, SampleTriggersEnum> Status { get; private set; }
+public Status<SampleStates, SampleTriggers> Status { get; private set; }
 
 public void Submit() {
-    stateMachine.Trigger(this, this.Status, SampleTriggersEnum.Submit, () => {
+    stateMachine.Trigger(this, this.Status, SampleTriggers.Submit, () => {
         Console.WriteLine("Submitted");
         SubmitCallCount++;
     });
@@ -48,4 +48,11 @@ public void Submit() {
 // ...
 ```
 
-The last argument is the action to perform before updating the status. If the transition is not carried out, the action is not performed.
+Trigger method takes four arguments:
+* First argument is the object that will be used to execute the entry/exit actions and guard conditions. In this example, if the current state is `SampleStates.Draft`, the condition defined with `.When<SampleStateful>(z => z.ShouldAllowTransition)` will be evaluated using this argument. If the transition happens, it will also be used to execute the exit action registered with `.WithExitAction<SampleStateful>(z => z.ExitActionCalled = true)`
+
+* Second argument is the status object that will be updated by the state machine. 
+
+* Third argument is the trigger. In this case, it is the `SampleTriggers.Submit` enumeration. 
+
+* The last argument is the action to perform before updating the status. If the transition is not carried out, the action is not performed. This allows implementing GoF state pattern by using a single class. Since the logic for the submit action is wrapped, it will not get executed until state machine will perform a transition. 
