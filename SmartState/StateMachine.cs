@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 using SmartState.Builder;
 
 namespace SmartState
@@ -24,27 +25,39 @@ namespace SmartState
             return new StateMachineBuilder<TState, TTrigger>(initialState);
         }
 
-        public void Trigger(object stateful, Status<TState, TTrigger> Status, TTrigger trigger, Action action)
+        public async Task TriggerAsync(object stateful, Status<TState, TTrigger> status, TTrigger trigger, Func<Task> action)
         {
-            var oldState = states.First(z => z.Name.Equals(Status.CurrentState));
+            var oldState = states.First(z => z.Name.Equals(status.CurrentState));
             var transition = oldState.Transitions.FirstOrDefault(z => z.Trigger.Equals(trigger) && z.Guard(stateful));
             if (transition == null)
             {
                 if (this.ThrowsInvalidStateException) 
-                    throw new InvalidStateException<TState, TTrigger>(Status.CurrentState, trigger);
+                    throw new InvalidStateException<TState, TTrigger>(status.CurrentState, trigger);
                 return;
             }
 
-            action();
+            await action();
             
-            Status.AddTransition(transition);
+            status.AddTransition(transition);
 
-            if (!Status.CurrentState.Equals(oldState.Name)) {
-                oldState.ExitAction(stateful);
-                var newState = states.FirstOrDefault(z => z.Name.Equals(Status.CurrentState));
-                newState.EntryAction(stateful);
+            if (!status.CurrentState.Equals(oldState.Name)) {
+                await oldState.ExitAction(stateful);
+                var newState = states.FirstOrDefault(z => z.Name.Equals(status.CurrentState));
+                await newState.EntryAction(stateful);
             }
         }
+
+        public void Trigger(object stateful, Status<TState, TTrigger> status, TTrigger trigger, Action action) 
+        {
+            Func<Task> task = () => { action(); return Task.CompletedTask; };
+            try {
+                TriggerAsync(stateful, status, trigger, task).Wait();
+            } catch(AggregateException aggreagate) {
+                throw aggreagate.InnerExceptions.Last();
+            }
+            
+        }
+
         public Status<TState, TTrigger> InitialStatus() {
             return new Status<TState, TTrigger>(this.initialState.Name);
         }

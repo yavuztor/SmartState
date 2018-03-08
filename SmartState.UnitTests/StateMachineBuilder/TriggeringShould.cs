@@ -4,7 +4,7 @@ using SmartState.Builder;
 
 namespace SmartState.UnitTests.StateMachineBuilder
 {
-    public class TriggerShould
+    public class TriggeringShould
     {
         private IBuildInitialState<SampleStates, SampleTriggers> state = StateMachine<SampleStates, SampleTriggers>.OnInitialState(SampleStates.Draft);
         

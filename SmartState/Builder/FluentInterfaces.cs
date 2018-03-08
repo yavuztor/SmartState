@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace SmartState.Builder
 {
@@ -23,6 +24,8 @@ namespace SmartState.Builder
 
         IBuildInitialState<TState, TTrigger> WithExitAction<T>(Action<T> action) where T:class;
 
+        IBuildInitialState<TState, TTrigger> WithExitActionAsync<T>(Func<T, Task> action) where T:class;
+
         TState CurrentState { get; }
 
         StateMachine<TState, TTrigger> Build();
@@ -32,6 +35,10 @@ namespace SmartState.Builder
     {
         IBuildState<TState, TTrigger> WithEntryAction<T>(Action<T> action) where T:class;
 
+        IBuildState<TState, TTrigger> WithEntryActionAsync<T>(Func<T, Task> action) where T:class;
+
         new IBuildState<TState, TTrigger> WithExitAction<T>(Action<T> action) where T:class;
+        
+        new IBuildState<TState, TTrigger> WithExitActionAsync<T>(Func<T, Task> action) where T:class;
     }
 }

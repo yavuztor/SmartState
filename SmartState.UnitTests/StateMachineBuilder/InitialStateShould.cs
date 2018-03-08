@@ -14,7 +14,7 @@ namespace SmartState.UnitTests.StateMachineBuilder
             var machine = StateMachine<SampleStates, SampleTriggers>.OnInitialState(SampleStates.Draft);
 
             // Assert
-            Assert.True(machine is IBuildState<SampleStates, SampleTriggers>);
+            Assert.True(machine is IBuildInitialState<SampleStates, SampleTriggers>);
         }
     }
 }

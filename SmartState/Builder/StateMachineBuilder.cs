@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace SmartState.Builder
 {
@@ -17,8 +18,8 @@ namespace SmartState.Builder
         private List<Transition<TState, TTrigger>> currentTransitions = new List<Transition<TState, TTrigger>>();
         private Func<object, bool> triggerGuard;
 
-        private List<Action<object>> entryActions = new List<Action<object>>();
-        private List<Action<object>> exitActions = new List<Action<object>>();
+        private List<Func<object, Task>> entryActions = new List<Func<object, Task>>();
+        private List<Func<object, Task>> exitActions = new List<Func<object, Task>>();
 
         public StateMachineBuilder(TState initialState) {
             this.currentState = initialState;
@@ -39,16 +40,27 @@ namespace SmartState.Builder
             if (initialState == null) initialState = states.First();
             currentState = fromState;
             currentTransitions = new List<Transition<TState, TTrigger>>();
-            entryActions = new List<Action<object>>();
-            exitActions = new List<Action<object>>();
+            entryActions = new List<Func<object, Task>>();
+            exitActions = new List<Func<object, Task>>();
             return this;
         }
 
         public IBuildState<TState, TTrigger> WithEntryAction<T>(Action<T> action) where T:class
         {
-            Action<object> entryAction = (object o) => 
+            Func<object, Task> entryAction = (object o) => 
             {
                 if (o is T) action(o as T);
+                return Task.CompletedTask;
+            };
+            entryActions.Add(entryAction);
+            return this;
+        }
+
+        public IBuildState<TState, TTrigger> WithEntryActionAsync<T>(Func<T, Task> action) where T:class
+        {
+            Func<object, Task> entryAction = (object o) => 
+            {
+                return (o is T) ? action(o as T) : Task.CompletedTask;
             };
             entryActions.Add(entryAction);
             return this;
@@ -56,11 +68,22 @@ namespace SmartState.Builder
 
         public IBuildState<TState, TTrigger> WithExitAction<T>(Action<T> action) where T:class
         {
-            Action<object> exitAction = (object o) => 
+            Func<object, Task> exitAction = (object o) => 
             {
                 if (o is T) action(o as T);
+                return Task.CompletedTask;
             };
             exitActions.Add(exitAction);
+            return this;
+        }
+
+        public IBuildState<TState, TTrigger> WithExitActionAsync<T>(Func<T, Task> action) where T:class
+        {
+            Func<object, Task> entryAction = (object o) => 
+            {
+                return (o is T) ? action(o as T) : Task.CompletedTask;
+            };
+            exitActions.Add(entryAction);
             return this;
         }
 
@@ -88,5 +111,9 @@ namespace SmartState.Builder
             return this.WithExitAction<T>(action);
         }
 
+        IBuildInitialState<TState, TTrigger> IBuildInitialState<TState, TTrigger>.WithExitActionAsync<T>(Func<T, Task> action)
+        {
+            return this.WithExitActionAsync<T>(action);
+        }
     }
 }

@@ -4,7 +4,7 @@ using SmartState.Builder;
 
 namespace SmartState.UnitTests.StateMachineBuilder
 {
-    public class ToStateShould
+    public class TransitinosToShould
     {
         [Fact]
         public void ReturnAStateBuilder()
