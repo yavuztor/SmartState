@@ -10,7 +10,7 @@
     <PackageTags>state fsm gof pattern state-machine</PackageTags>
     <PackageReleaseNotes>Add memory optimizing changes</PackageReleaseNotes>
     <Authors>Yavuz Tor</Authors>
-    <Description>A state machine library that makes implementing state transitions more fun.</Description>
+    <Description>A state machine library that makes implementing state transitions more fun. Now with async execution.</Description>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>    
   </PropertyGroup>
 

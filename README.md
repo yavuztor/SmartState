@@ -26,7 +26,8 @@ var stateMachine = SmartState.StateMachine<SampleStates, SampleTriggers>
         .Triggering(SampleTriggers.Save).TransitionsTo(SampleStates.Draft)
         .Triggering(SampleTriggers.Reject).TransitionsTo(SampleStates.Rejected)
 
-    .OnState(SampleStates.Rejected)
+    // a state with an async entry action..
+    .OnState(SampleStates.Rejected).WithEntryActionAsync<SampleStateful>(async stateful => await Task.CompletedTask)
         .Triggering(SampleTriggers.Save).TransitionsTo(SampleStates.Draft)
     .Build();
 ```
@@ -56,3 +57,22 @@ Trigger method takes four arguments:
 * Third argument is the trigger. In this case, it is the `SampleTriggers.Submit` enumeration. 
 
 * The last argument is the action to perform before updating the status. If the transition is not carried out, the action is not performed. This allows implementing GoF state pattern by using a single class. Since the logic for the submit action is wrapped, it will not get executed until state machine will perform a transition. 
+
+Async execution is also possible
+
+```csharp
+// ...
+
+public Status<SampleStates, SampleTriggers> Status { get; private set; }
+
+public async Task Submit() {
+    await stateMachine.TriggerAsync(this, this.Status, SampleTriggers.Submit, async () => {
+        // You can await for any async task.
+        await Task.CompletedTask;
+        Console.WriteLine("Submitted");
+        SubmitCallCount++;
+    });
+}
+
+// ...
+```

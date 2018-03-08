@@ -1,6 +1,7 @@
 namespace SmartState.UnitTests {
 
     using System;
+    using System.Threading.Tasks;
     using SmartState;
     
     public enum SampleStates {
@@ -36,7 +37,7 @@ namespace SmartState.UnitTests {
                     .Triggering(SampleTriggers.Save).TransitionsTo(SampleStates.Draft)
                     .Triggering(SampleTriggers.Reject).TransitionsTo(SampleStates.Rejected)
 
-                .OnState(SampleStates.Rejected)
+                .OnState(SampleStates.Rejected).WithEntryActionAsync<SampleStateful>(async stateful => await Task.CompletedTask)
                     .Triggering(SampleTriggers.Save).TransitionsTo(SampleStates.Draft)
                 .Build();
         }
