@@ -22,9 +22,9 @@ namespace SmartState.Builder
 
         IBuildState<TState, TTrigger> OnState(TState fromState);
 
-        IBuildInitialState<TState, TTrigger> WithExitAction<T>(Action<T> action) where T:class;
+        IBuildInitialState<TState, TTrigger> WithExitAction<T>(Action<T, TState> action) where T:class;
 
-        IBuildInitialState<TState, TTrigger> WithExitActionAsync<T>(Func<T, Task> action) where T:class;
+        IBuildInitialState<TState, TTrigger> WithExitActionAsync<T>(Func<T, TState, Task> action) where T:class;
 
         TState CurrentState { get; }
 
@@ -33,12 +33,12 @@ namespace SmartState.Builder
 
     public interface IBuildState<TState, TTrigger>:IBuildInitialState<TState, TTrigger>
     {
-        IBuildState<TState, TTrigger> WithEntryAction<T>(Action<T> action) where T:class;
+        IBuildState<TState, TTrigger> WithEntryAction<T>(Action<T, TState> action) where T:class;
 
-        IBuildState<TState, TTrigger> WithEntryActionAsync<T>(Func<T, Task> action) where T:class;
+        IBuildState<TState, TTrigger> WithEntryActionAsync<T>(Func<T, TState, Task> action) where T:class;
 
-        new IBuildState<TState, TTrigger> WithExitAction<T>(Action<T> action) where T:class;
-        
-        new IBuildState<TState, TTrigger> WithExitActionAsync<T>(Func<T, Task> action) where T:class;
+        new IBuildState<TState, TTrigger> WithExitAction<T>(Action<T, TState> action) where T:class;
+
+        new IBuildState<TState, TTrigger> WithExitActionAsync<T>(Func<T, TState, Task> action) where T:class;
     }
 }

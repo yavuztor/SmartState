@@ -15,7 +15,7 @@ namespace SmartState.UnitTests.StateMachineBuilder
             var machine = StateMachine<SampleStates, SampleTriggers>.OnInitialState(SampleStates.Draft)
                 .Triggering(SampleTriggers.Submit).TransitionsTo(SampleStates.Submitted)
                 .OnState(SampleStates.Submitted)
-                    .WithEntryActionAsync<SampleStateful>(a => Task.CompletedTask);
+                    .WithEntryActionAsync<SampleStateful>((a, prevState) => Task.CompletedTask);
 
             // Assert
             Assert.True(machine is IBuildState<SampleStates, SampleTriggers>);

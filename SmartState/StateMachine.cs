@@ -41,9 +41,9 @@ namespace SmartState
             status.AddTransition(transition);
 
             if (!status.CurrentState.Equals(oldState.Name)) {
-                await oldState.ExitAction(stateful);
                 var newState = states.FirstOrDefault(z => z.Name.Equals(status.CurrentState));
-                await newState.EntryAction(stateful);
+                await oldState.ExitAction(stateful, newState.Name);
+                await newState.EntryAction(stateful, oldState.Name);
             }
         }
 

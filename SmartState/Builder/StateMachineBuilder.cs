@@ -18,8 +18,8 @@ namespace SmartState.Builder
         private List<Transition<TState, TTrigger>> currentTransitions = new List<Transition<TState, TTrigger>>();
         private Func<object, bool> triggerGuard;
 
-        private List<Func<object, Task>> entryActions = new List<Func<object, Task>>();
-        private List<Func<object, Task>> exitActions = new List<Func<object, Task>>();
+        private List<Func<object, TState, Task>> entryActions = new List<Func<object, TState, Task>>();
+        private List<Func<object, TState, Task>> exitActions = new List<Func<object, TState, Task>>();
 
         public StateMachineBuilder(TState initialState) {
             this.currentState = initialState;
@@ -40,48 +40,48 @@ namespace SmartState.Builder
             if (initialState == null) initialState = states.First();
             currentState = fromState;
             currentTransitions = new List<Transition<TState, TTrigger>>();
-            entryActions = new List<Func<object, Task>>();
-            exitActions = new List<Func<object, Task>>();
+            entryActions = new List<Func<object, TState, Task>>();
+            exitActions = new List<Func<object, TState, Task>>();
             return this;
         }
 
-        public IBuildState<TState, TTrigger> WithEntryAction<T>(Action<T> action) where T:class
+        public IBuildState<TState, TTrigger> WithEntryAction<T>(Action<T, TState> action) where T:class
         {
-            Func<object, Task> entryAction = (object o) => 
+            Func<object, TState, Task> entryAction = (object o, TState previousState) => 
             {
-                if (o is T) action(o as T);
+                if (o is T) action(o as T, previousState);
                 return Task.CompletedTask;
             };
             entryActions.Add(entryAction);
             return this;
         }
 
-        public IBuildState<TState, TTrigger> WithEntryActionAsync<T>(Func<T, Task> action) where T:class
+        public IBuildState<TState, TTrigger> WithEntryActionAsync<T>(Func<T, TState, Task> action) where T:class
         {
-            Func<object, Task> entryAction = (object o) => 
+            Func<object, TState, Task> entryAction = (object o, TState previousState) => 
             {
-                return (o is T) ? action(o as T) : Task.CompletedTask;
+                return (o is T) ? action(o as T, previousState) : Task.CompletedTask;
             };
             entryActions.Add(entryAction);
             return this;
         }
 
-        public IBuildState<TState, TTrigger> WithExitAction<T>(Action<T> action) where T:class
+        public IBuildState<TState, TTrigger> WithExitAction<T>(Action<T, TState> action) where T:class
         {
-            Func<object, Task> exitAction = (object o) => 
+            Func<object, TState, Task> exitAction = (object o, TState previousState) => 
             {
-                if (o is T) action(o as T);
+                if (o is T) action(o as T, previousState);
                 return Task.CompletedTask;
             };
             exitActions.Add(exitAction);
             return this;
         }
 
-        public IBuildState<TState, TTrigger> WithExitActionAsync<T>(Func<T, Task> action) where T:class
+        public IBuildState<TState, TTrigger> WithExitActionAsync<T>(Func<T, TState, Task> action) where T:class
         {
-            Func<object, Task> entryAction = (object o) => 
+            Func<object, TState, Task> entryAction = (object o, TState previousState) => 
             {
-                return (o is T) ? action(o as T) : Task.CompletedTask;
+                return (o is T) ? action(o as T, previousState) : Task.CompletedTask;
             };
             exitActions.Add(entryAction);
             return this;
@@ -106,12 +106,12 @@ namespace SmartState.Builder
             return this;
         }
 
-        IBuildInitialState<TState, TTrigger> IBuildInitialState<TState, TTrigger>.WithExitAction<T>(Action<T> action)
+        IBuildInitialState<TState, TTrigger> IBuildInitialState<TState, TTrigger>.WithExitAction<T>(Action<T, TState> action)
         {
             return this.WithExitAction<T>(action);
         }
 
-        IBuildInitialState<TState, TTrigger> IBuildInitialState<TState, TTrigger>.WithExitActionAsync<T>(Func<T, Task> action)
+        IBuildInitialState<TState, TTrigger> IBuildInitialState<TState, TTrigger>.WithExitActionAsync<T>(Func<T, TState, Task> action)
         {
             return this.WithExitActionAsync<T>(action);
         }

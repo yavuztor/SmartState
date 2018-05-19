@@ -26,18 +26,18 @@ namespace SmartState.UnitTests {
         static SampleStateful() 
         {
             stateMachine = SmartState.StateMachine<SampleStates, SampleTriggers>
-                .OnInitialState(SampleStates.Draft).WithExitAction<SampleStateful>(z => z.ExitActionCalled = true)
+                .OnInitialState(SampleStates.Draft).WithExitAction<SampleStateful>((z, nextState) => z.ExitActionCalled = true)
                     .Triggering(SampleTriggers.Submit)
                         .When<SampleStateful>(z => z.ShouldAllowTransition)
                         .TransitionsTo(SampleStates.Submitted)
                     .Triggering(SampleTriggers.SubmitWithComment).TransitionsTo(SampleStates.Submitted)
 
-                .OnState(SampleStates.Submitted).WithEntryAction<SampleStateful>(z => z.EntryActionCalled = true)
+                .OnState(SampleStates.Submitted).WithEntryAction<SampleStateful>((z, prevState) => z.EntryActionCalled = true)
                     .Triggering(SampleTriggers.Approve).TransitionsTo(SampleStates.Approved)
                     .Triggering(SampleTriggers.Save).TransitionsTo(SampleStates.Draft)
                     .Triggering(SampleTriggers.Reject).TransitionsTo(SampleStates.Rejected)
 
-                .OnState(SampleStates.Rejected).WithEntryActionAsync<SampleStateful>(async stateful => await Task.CompletedTask)
+                .OnState(SampleStates.Rejected).WithEntryActionAsync<SampleStateful>(async (stateful, prevState) => await Task.CompletedTask)
                     .Triggering(SampleTriggers.Save).TransitionsTo(SampleStates.Draft)
                 .Build();
         }
