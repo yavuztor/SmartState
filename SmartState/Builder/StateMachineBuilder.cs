@@ -68,9 +68,9 @@ namespace SmartState.Builder
 
         public IBuildState<TState, TTrigger> WithExitAction<T>(Action<T, TState> action) where T:class
         {
-            Func<object, TState, Task> exitAction = (object o, TState previousState) => 
+            Func<object, TState, Task> exitAction = (object o, TState nextState) => 
             {
-                if (o is T) action(o as T, previousState);
+                if (o is T) action(o as T, nextState);
                 return Task.CompletedTask;
             };
             exitActions.Add(exitAction);
@@ -79,9 +79,9 @@ namespace SmartState.Builder
 
         public IBuildState<TState, TTrigger> WithExitActionAsync<T>(Func<T, TState, Task> action) where T:class
         {
-            Func<object, TState, Task> entryAction = (object o, TState previousState) => 
+            Func<object, TState, Task> entryAction = (object o, TState nextState) => 
             {
-                return (o is T) ? action(o as T, previousState) : Task.CompletedTask;
+                return (o is T) ? action(o as T, nextState) : Task.CompletedTask;
             };
             exitActions.Add(entryAction);
             return this;
